@@ -9,7 +9,6 @@ import re
 
 app = Flask(__name__)
 
-
 @app.before_first_request
 def init():
     init_db()
@@ -48,6 +47,7 @@ def handle_message(event):
     user_name = line_bot_api.get_profile(event.source.user_id).display_name
     user = User.query.filter(User.id == user_id).first()
     query = User.query.filter_by(id=user_id).first()
+    #如果資料庫沒有他的資料就登記一下
     if not user:
         user = User(id=user_id, user_name=user_name)
         print(user)
@@ -58,7 +58,7 @@ def handle_message(event):
         correct_cellphone_number = re.match(r'(?:0|886-?)9\d{2}-?\d{6}', content)
         if correct_cellphone_number:
             line_bot_api.push_message(user_id, TextSendMessage('恭喜註冊成功！'))
-            start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_07)
+            line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_07)
             query.is_member = True
             query.is_signup = False
             query.phone_number = content
@@ -155,19 +155,19 @@ def handle_message(event):
     record_message_event(event)
     # 更換RICHMENU測試
     if event.message.text == 'change1':
-        start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_01)
+        line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_01)
     elif event.message.text == 'change2':
-        start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_02)
+        line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_02)
     elif event.message.text == 'change3':
-        start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_03)
+        line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_03)
     elif event.message.text == 'change4':
-        start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_04)
+        line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_04)
     elif event.message.text == 'change5':
-        start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_05)
+        line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_05)
     elif event.message.text == 'change6':
-        start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_06)
+        line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_06)
     elif event.message.text == 'change7':
-        start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_07)
+        line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_07)
     # 發送訊息
     # line_bot_api.reply_message(
     #     event.reply_token,
@@ -339,7 +339,7 @@ def follow_message(event):
         print(user)
         db_session.add(user)
         db_session.commit()
-    start_richmenu.setRichmenu(richmenu_list.RichMenu_ID.richmenu_03)
+    line_bot_api.link_rich_menu_to_user(user_id, richmenu_list.RichMenu_ID.richmenu_03)
     print('welcome')
     line_bot_api.reply_message(
         event.reply_token,
